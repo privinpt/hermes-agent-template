@@ -1,0 +1,39 @@
+version: '3.8'
+
+# Use this docker-compose file to deploy with the pre-built image from GitHub Container Registry
+# Instead of building locally (30+ minutes), this pulls the image in ~2 minutes
+
+services:
+  hermes-agent:
+    # Pull pre-built image from GitHub Container Registry
+    image: ghcr.io/privinpt/hermes-agent-template:latest
+    
+    container_name: hermes-agent
+    restart: unless-stopped
+    
+    ports:
+      - "8080:8080"
+    
+    volumes:
+      - hermes-data:/data
+    
+    environment:
+      # Admin credentials
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+      
+      # Server configuration
+      - PORT=8080
+      - HERMES_HOME=/data/.hermes
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  hermes-data:
+    driver: local
