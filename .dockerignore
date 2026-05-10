@@ -1,0 +1,54 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+DEPLOY.md
+docs/
+
+# Environment and config
+.env
+.env.example
+.env.local
+.env.*
+
+# Docker
+docker-compose.yml
+.dockerignore
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+
+# Hermes data (shouldn't be in repo anyway)
+.hermes/
+data/
+
+# Logs
+*.log
+logs/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Railway
+railway.toml
+.railway/

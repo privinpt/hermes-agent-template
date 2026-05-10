@@ -94,11 +94,46 @@ Railway Container
 
 The admin server runs on `$PORT` and manages the Hermes gateway as a child process. Config is stored in `/data/.hermes/.env` and `/data/.hermes/config.yaml`. Gateway stdout/stderr is captured into a ring buffer and streamed to the Logs panel.
 
-## Running Locally
+## Deployment Options
+
+### Option 1: Railway (One-Click)
+
+1. Click the **Deploy on Railway** button above
+2. Set the `ADMIN_PASSWORD` environment variable
+3. Attach a **volume** mounted at `/data`
+4. Open your app URL and log in
+
+### Option 2: Docker Compose (Self-Hosted)
+
+Perfect for Oracle Cloud, DigitalOcean, AWS, or any VM with Docker:
+
+```bash
+# Clone the repository
+git clone <repo-url> hermes-agent
+cd hermes-agent
+
+# Configure environment
+cp .env.example .env
+nano .env  # Set ADMIN_PASSWORD and optional API keys
+
+# Start
+docker compose up -d
+
+# View logs
+docker compose logs -f
+```
+
+See [DEPLOY.md](DEPLOY.md) for detailed Oracle Cloud setup guide.
+
+### Option 3: Docker Run (Manual)
 
 ```bash
 docker build -t hermes-agent .
-docker run --rm -it -p 8080:8080 -e PORT=8080 -e ADMIN_PASSWORD=changeme -v hermes-data:/data hermes-agent
+docker run --rm -it -p 8080:8080 \
+  -e PORT=8080 \
+  -e ADMIN_PASSWORD=changeme \
+  -v hermes-data:/data \
+  hermes-agent
 ```
 
 Open `http://localhost:8080` and log in with `admin` / `changeme`.

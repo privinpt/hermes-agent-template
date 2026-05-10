@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  hermes-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Pin to specific Hermes release for reproducibility
+        # Check https://github.com/NousResearch/hermes-agent/releases for latest
+        HERMES_REF: v2026.4.30
+    
+    container_name: hermes-agent
+    
+    # Restart policy for production stability
+    restart: unless-stopped
+    
+    ports:
+      - "8080:8080"
+    
+    volumes:
+      # Persistent storage for config, logs, and data
+      - hermes-data:/data
+    
+    environment:
+      # Admin credentials - CHANGE THESE!
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+      
+      # Server configuration
+      - PORT=8080
+      - HERMES_HOME=/data/.hermes
+      
+      # LLM Provider API Keys (configure via admin UI or set here)
+      # Uncomment and set the ones you need:
+      # - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      # - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      # - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY:-}
+      # - GLM_API_KEY=${GLM_API_KEY:-}
+      # - KIMI_API_KEY=${KIMI_API_KEY:-}
+      # - MINIMAX_API_KEY=${MINIMAX_API_KEY:-}
+      # - HF_TOKEN=${HF_TOKEN:-}
+      # - NVIDIA_API_KEY=${NVIDIA_API_KEY:-}
+      # - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      
+      # LLM Model (configure via admin UI or set here)
+      # - LLM_MODEL=${LLM_MODEL:-}
+      
+      # Tool API Keys (configure via admin UI or set here)
+      # - PARALLEL_API_KEY=${PARALLEL_API_KEY:-}
+      # - FIRECRAWL_API_KEY=${FIRECRAWL_API_KEY:-}
+      # - TAVILY_API_KEY=${TAVILY_API_KEY:-}
+      # - FAL_KEY=${FAL_KEY:-}
+      
+      # Messaging Channel Tokens (configure via admin UI or set here)
+      # - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      # - DISCORD_TOKEN=${DISCORD_TOKEN:-}
+      # - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN:-}
+    
+    # Health check (optional but recommended for production)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Resource limits (optional - adjust based on your VM)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 2G
+    #       cpus: '1.0'
+    #     reservations:
+    #       memory: 512M
+    #       cpus: '0.25'
+
+volumes:
+  # Named volume for persistent data
+  # Data persists across container restarts and upgrades
+  hermes-data:
+    driver: local
